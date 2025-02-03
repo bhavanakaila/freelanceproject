@@ -1,0 +1,54 @@
+{
+  "employerList": [
+    {
+      "id": "9e8c",
+      "fullName": "ravi",
+      "email": "ravi@gmail.com",
+      "mobileNumber": "9030552549",
+      "password": "ravikanth",
+      "userType": "Employer"
+    },
+    {
+      "id": "93bf",
+      "fullName": "keerthana",
+      "email": "keerthana@gmail.com",
+      "mobileNumber": "1234567890",
+      "password": "keerthana",
+      "userType": "Employer"
+    }
+  ],
+  "freelancerList": [
+    {
+      "id": "3458",
+      "fullName": "Kaila Bhavana",
+      "email": "bhavanakaila046@gmail.com",
+      "mobileNumber": "9030552549",
+      "password": "bhavana",
+      "userType": "Freelancer"
+    },
+    {
+      "id": "1439",
+      "fullName": "bhanu",
+      "email": "bhanu@gmail.com",
+      "mobileNumber": "9030552549",
+      "password": "bhanusri",
+      "userType": "Freelancer"
+    },
+    {
+      "id": "47a5",
+      "fullName": "kiran",
+      "email": "kiran@gmail.com",
+      "mobileNumber": "7894561230",
+      "password": "kiran1",
+      "userType": "Freelancer"
+    },
+    {
+      "id": "0020",
+      "fullName": "keerthana_L",
+      "email": "ravi@gmail.com",
+      "mobileNumber": "9030552549",
+      "password": "keerthana",
+      "userType": "Freelancer"
+    }
+  ]
+}
