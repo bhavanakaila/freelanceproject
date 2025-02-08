@@ -1,53 +1,62 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { employerLoginContext } from "./employerLoginContext";
 
-function EmployerLoginStore({ children }) {
-    const [currentEmployee, setCurrentEmployee] = useState(null);
-    const [employeeLoginStatus, setEmployeeLoginStatus] = useState(false);
-    const [err, setErr] = useState("");
+const EmployerLoginStore = ({ children }) => {
+  const [currentEmployee, setCurrentEmployee] = useState(null);
+  const [EmployeeLoginStatus, setEmployeeLoginStatus] = useState(false);
+  const [err, setErr] = useState("");
+  const [JobListing, setJobListing]=useState("");
 
-    async function loginEmployee(userCred) {
-        try {
-            // Fetch the list of employers
-            let res = await fetch("http://localhost:3000/employerList");
-            if (!res.ok) throw new Error("Failed to fetch employer details");
-
-            let employers = await res.json();
-
-            // Find the employer with matching credentials
-            const employer = employers.find(
-                (emp) =>
-                    emp.fullName === userCred.username && emp.password === userCred.password
-            );
-
-            if (!employer) {
-                setCurrentEmployee(null);
-                setEmployeeLoginStatus(false);
-                setErr("Invalid Username or Password");
-            } else {
-                setCurrentEmployee(employer);
-                setEmployeeLoginStatus(true);
-                setErr("");
-            }
-        } catch (error) {
-            console.error("Login Error:", error);
-            setErr("Something went wrong. Please try again.");
+  const loginEmployee = (user) => {
+    fetch("http://localhost:3000/employerList")
+      .then((res) => res.json())
+      .then((data) => {
+        const employer = data.find(emp => emp.fullName === user.username && emp.password === user.password);
+        console.log(employer);
+        if (!employer) {
+          setCurrentEmployee(null);
+          setEmployeeLoginStatus(false);
+          setErr("Invalid Username or Password");
+        } else {
+          setCurrentEmployee(employer);
+          setEmployeeLoginStatus(true);
+          setErr("");
         }
+      });
+  };
+  const logoutEmployer = () => {
+    setCurrentEmployee(null);
+    setEmployeeLoginStatus(false);
+    setErr("");
+  };
+
+ useEffect(()=>{
+  async function fetchUsers(){
+    try{
+      let res= await fetch('http://localhost:3000/employerList');
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
     }
 
-    function logoutEmployee() {
-        setCurrentEmployee(null);
-        setEmployeeLoginStatus(false);
-        setErr("");
+    let userslist = await res.json();
+    const allJobs = userslist.flatMap(user => user.joblist || []);
+    console.log(allJobs);
+    setJobListing(allJobs)
     }
+    catch(error){
+      console.log("There is an error while fetching data")
+    }
+  }
+  fetchUsers();
+ },[]);
+  
 
-    return (
-        <employerLoginContext.Provider
-            value={{ loginEmployee, logoutEmployee, employeeLoginStatus, err, currentEmployee }}
-        >
-            {children}
-        </employerLoginContext.Provider>
-    );
-}
+  return (
+    <employerLoginContext.Provider value={{ currentEmployee,setCurrentEmployee, EmployeeLoginStatus, loginEmployee,logoutEmployer,err,JobListing }}>
+      {children}
+    </employerLoginContext.Provider>
+  );
+};
 
 export default EmployerLoginStore;

@@ -1,9 +1,79 @@
-import React, { useState } from "react";
+import React, { useState,useEffect,useContext } from "react";
+import {employerLoginContext} from '../../contexts/employerLoginContext'
+import { useForm } from "react-hook-form";
 import "./EmployerDashboard.css";
 
 const EmployerDashboard = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
+  const { currentEmployee, setCurrentEmployee } = useContext(employerLoginContext);
+  const [isEditing, setIsEditing] = useState(false);
 
+  useEffect(() => {
+    if (activeSection === "profile" && currentEmployee) {
+      setValue("fullName", currentEmployee?.fullName || "");
+      setValue("email", currentEmployee?.email || "");
+      setValue("mobileNumber", currentEmployee?.mobileNumber || "");
+      setValue("companyname", currentEmployee?.companyname || "");
+      setValue("location", currentEmployee?.location || "");
+    }
+  }, [activeSection, currentEmployee, setValue]);
+
+
+  const onSubmitProfile = async (data) => {
+    if (!currentEmployee?.id) {
+      console.error("Employer ID is missing");
+      return;
+    }
+  
+    try {
+      // Fetch existing employer data to retain missing fields (like password)
+      const response = await fetch(`http://localhost:3000/employerList/${currentEmployee.id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch current employer data");
+      }
+      const existingData = await response.json();
+  
+      const updatedEmployer = {
+        ...existingData, // Retain existing fields (including password)
+        ...data, // Overwrite with new form values
+      };
+  
+      const updateResponse = await fetch(`http://localhost:3000/employerList/${currentEmployee.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedEmployer),
+      });
+  
+      if (!updateResponse.ok) {
+        throw new Error("Failed to update employer profile");
+      }
+  
+      const updatedEmployerData = await updateResponse.json();
+      setCurrentEmployee(updatedEmployerData); // Update state with full data
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  };
+  
+
+
+  
+  const [formData, setFormData] = useState({
+    companyname: "",
+    jobTitle: "",
+    status: "Active",
+    pay: "",
+  });
+
+  
+  const [jobPostings, setJobPostings] = useState([]);
+  // const [employerId, setEmployerId] = useState(null);
+  // const currentEmployerEmail = "kiran@gmail.com"; 
+  
   // Dummy data for freelancers and job postings
   const freelancers = [
     {
@@ -26,10 +96,109 @@ const EmployerDashboard = () => {
     },
   ];
 
-  const jobPostings = [
-    { id: 1, title: "React Developer Needed", status: "Active" },
-    { id: 2, title: "Data Analyst Project", status: "Filled" },
-  ];
+  
+
+  
+
+  
+  
+  
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   console.log("jobPosting",name, value);
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
+
+// job postings
+  async function jobListing(jobdetails) {
+    console.log("Name", currentEmployee.fullName);
+    
+    let res = await fetch(`http://localhost:3000/employerList/${currentEmployee.id}`);
+    let data = await res.json();
+    
+    if (!data.joblist) {
+      data.joblist = [];
+    }
+    
+    data.joblist.push(jobdetails);
+
+    res = await fetch(`http://localhost:3000/employerList/${currentEmployee.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+  }
+
+  useEffect(() => {
+    const fetchJobPostings = async () => {
+      try {
+        const res = await fetch(`http://localhost:3000/employerList/${currentEmployee.id}`);
+        const data = await res.json();
+
+        if (data.joblist) {
+          setJobPostings(data.joblist);
+        } else {
+          setJobPostings([]);
+        }
+      } catch (error) {
+        console.error("Error fetching job postings:", error);
+      }
+    };
+
+    if (currentEmployee?.id) {
+      fetchJobPostings();
+    }
+  }, [currentEmployee]);
+  
+  const handlePostJob = async () => {
+    console.log(currentEmployee)
+    console.log("Form data",formData);
+
+    const newJob = {
+      id: Date.now(), 
+      companyname: formData.companyname,
+      jobTitle: formData.jobTitle,
+      status: formData.status,
+      pay: formData.pay,
+      employerId: currentEmployee.id, 
+       
+    };
+  
+    setJobPostings((prev) => [...prev, newJob]);
+    setFormData({ companyname: formData.companyname, jobTitle: "", status: "Active", pay: "" });
+
+    await jobListing(newJob);
+  };
+  
+  const deleteJob = async (jobId) => {
+    try {
+      let res = await fetch(`http://localhost:3000/employerList/${currentEmployee.id}`);
+      let data = await res.json();
+
+      // Remove the job from the joblist array
+      data.joblist = data.joblist.filter((job) => job.id !== jobId);
+
+      // Update the employer record in db.json
+      await fetch(`http://localhost:3000/employerList/${currentEmployee.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      // Update the UI
+      setJobPostings(data.joblist);
+    } catch (error) {
+      console.error("Error deleting job:", error);
+    }
+  };
+  
 
   return (
     <div className="dashboard-container">
@@ -44,12 +213,6 @@ const EmployerDashboard = () => {
             Dashboard
           </li>
           <li
-            className={activeSection === "freelancers" ? "active" : ""}
-            onClick={() => setActiveSection("freelancers")}
-          >
-            Freelancer Profiles
-          </li>
-          <li
             className={activeSection === "jobPostings" ? "active" : ""}
             onClick={() => setActiveSection("jobPostings")}
           >
@@ -61,89 +224,122 @@ const EmployerDashboard = () => {
           >
             Shortlisted Freelancers
           </li>
+          <li
+            className={activeSection === "profile" ? "active" : ""}
+            onClick={() => setActiveSection("profile")}
+          >
+            Profile
+          </li>
         </ul>
       </div>
 
       {/* Main Content */}
       <div className="main-content">
         {activeSection === "dashboard" && (
-          <div className="dashboard-overview">
-            <h3>Dashboard Overview</h3>
-            <div className="metrics">
-              <div className="metric">
-                <h4>Active Projects</h4>
-                <p>3</p>
-              </div>
-              <div className="metric">
-                <h4>Shortlisted Freelancers</h4>
-                <p>5</p>
-              </div>
-              <div className="metric">
-                <h4>Job Postings</h4>
-                <p>2</p>
-              </div>
-            </div>
-
-            {/* Freelancer Profiles in Dashboard */}
-            <div className="freelancer-profiles">
-              <h3>Freelancer Profiles</h3>
-              <div className="freelancer-list">
-                {freelancers.map((freelancer) => (
-                  <div key={freelancer.id} className="freelancer-card">
-                    <h4>{freelancer.name}</h4>
-                    <p>Skills: {freelancer.skills.join(", ")}</p>
-                    <p>Experience: {freelancer.experience}</p>
-                    <p>Hourly Rate: {freelancer.hourlyRate}</p>
-                    <p>Rating: {freelancer.rating}</p>
-                    <a href={freelancer.portfolio} target="_blank" className='carda' rel="noopener noreferrer">
-                      View Portfolio
-                    </a>
-                    <button className='shortbtn'>Shortlist</button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeSection === "freelancers" && (
           <div className="freelancer-profiles">
-            <h3>Freelancer Profiles</h3>
-            <div className="search-bar">
-              <input type="text" placeholder="Search freelancers..." />
-              <button>Search</button>
-            </div>
-            <div className="freelancer-list">
-              {freelancers.map((freelancer) => (
-                <div key={freelancer.id} className="freelancer-card">
-                  <h4>{freelancer.name}</h4>
-                  <p>Skills: {freelancer.skills.join(", ")}</p>
-                  <p>Experience: {freelancer.experience}</p>
-                  <p>Hourly Rate: {freelancer.hourlyRate}</p>
-                  <p>Rating: {freelancer.rating}</p>
-                  <a href={freelancer.portfolio} target="_blank" rel="noopener noreferrer">
-                    View Portfolio
-                  </a>
-                  <button>Shortlist</button>
-                </div>
-              ))}
-            </div>
+          <h3>Freelancer Profiles</h3>
+          <div className="search-bar">
+            <input type="text" placeholder="Search freelancers..." />
+            <button>Search</button>
           </div>
+          <div className="freelancer-list">
+            {freelancers.map((freelancer) => (
+              <div key={freelancer.id} className="freelancer-card">
+                <h4>{freelancer.name}</h4>
+                <p>Skills: {freelancer.skills.join(", ")}</p>
+                <p>Experience: {freelancer.experience}</p>
+                <p>Hourly Rate: {freelancer.hourlyRate}</p>
+                <p>Rating: {freelancer.rating}</p>
+                <a href={freelancer.portfolio} target="_blank" rel="noopener noreferrer">
+                  View Portfolio
+                </a>
+                <button>Shortlist</button>
+              </div>
+            ))}
+          </div>
+        </div>
         )}
+
 
         {activeSection === "jobPostings" && (
-          <div className="job-postings">
-            <h3>Job Postings</h3>
-            <div className="job-list">
-              {jobPostings.map((job) => (
-                <div key={job.id} className="job-card">
-                  <h4>{job.title}</h4>
-                  <p>Status: {job.status}</p>
-                  <button>Edit</button>
-                </div>
-              ))}
-            </div>
-          </div>
+         <div className="job-postings">
+         <h3>Job Postings</h3>
+       
+         {/* Job Posting Form */}
+         <form onSubmit={handleSubmit(handlePostJob)} className="mb-6 space-y-4">
+        <div>
+          <label className="block font-medium">Company Name:</label>
+          <input
+            {...register("companyname", { required: "Company name is required" })}
+            value={formData.companyname}
+            onChange={(e) => setFormData({ ...formData, companyname: e.target.value })}
+            className="border p-2 w-full"
+          />
+          {errors.companyname && <p className="text-red-500">{errors.companyname.message}</p>}
+        </div>
+
+        <div>
+          <label className="block font-medium">Job Title:</label>
+          <input
+            {...register("jobTitle", { required: "Job title is required" })}
+            value={formData.jobTitle}
+            onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
+            className="border p-2 w-full"
+          />
+          {errors.jobTitle && <p className="text-red-500">{errors.jobTitle.message}</p>}
+        </div>
+
+        <div>
+          <label className="block font-medium">Status:</label>
+          <select
+            {...register("status", { required: "Status is required" })}
+            value={formData.status}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+            className="border p-2 w-full"
+          >
+            <option value="Active">Active</option>
+            <option value="Closed">Closed</option>
+          </select>
+          {errors.status && <p className="text-red-500">{errors.status.message}</p>}
+        </div>
+
+        <div>
+          <label className="block font-medium">Pay:</label>
+          <input
+            type="number"
+            {...register("pay", { required: "Pay is required", min: 1 })}
+            value={formData.pay}
+            onChange={(e) => setFormData({ ...formData, pay: e.target.value })}
+            className="border p-2 w-full"
+          />
+          {errors.pay && <p className="text-red-500">{errors.pay.message}</p>}
+        </div>
+
+        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+          Post Job
+        </button>
+      </form>
+
+      {/* Job Listings */}
+      <div>
+        <h3 className="text-xl font-bold">Your Job Listings</h3>
+        {jobPostings.length === 0 ? (
+          <p className="text-gray-500">No job postings yet.</p>
+        ) : (
+          <ul className="mt-4 space-y-2">
+            {jobPostings.map((job) => (
+              <li key={job.id} className="border p-3 rounded shadow">
+                <p><strong>Company:</strong> {job.companyname}</p>
+                <p><strong>Role:</strong>{job.jobTitle}</p>
+                <p><strong>Status:</strong> {job.status}</p>
+                <p><strong>Pay:</strong> {job.pay}</p>
+                <button onClick={() => deleteJob(job.id)} className="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+       </div>
         )}
 
         {activeSection === "shortlisted" && (
@@ -159,6 +355,50 @@ const EmployerDashboard = () => {
               ))}
             </div>
           </div>
+        )}
+
+       
+
+      {/* Employer Profile Section */}
+      {activeSection === "profile" && (
+        <div className="employer-profile">
+          <h3>Employer Profile</h3>
+          {isEditing ? (
+            <form onSubmit={handleSubmit(onSubmitProfile)} className="profile-form">
+              <div className="form-group">
+                <label>Name:</label>
+                <input type="text" {...register("fullName")} />
+              </div>
+              <div className="form-group">
+                <label>Email:</label>
+                <input type="email" {...register("email")} />
+              </div>
+              <div className="form-group">
+                <label>Mobile:</label>
+                <input type="text" {...register("mobileNumber")} />
+              </div>
+              <div className="form-group">
+                <label>Company:</label>
+                <input type="text" {...register("companyname")} />
+              </div>
+              <div className="form-group">
+                <label>Location:</label>
+                <input type="text" {...register("location")} />
+              </div>
+              <button type="submit">Save</button>
+              <button type="button" onClick={() => { reset(); setIsEditing(false); }}>Cancel</button>
+            </form>
+          ) : (
+            <div className="profile-details">
+              <p><strong>Name:</strong> {currentEmployee?.fullName}</p>
+              <p><strong>Email:</strong> {currentEmployee?.email}</p>
+              <p><strong>Mobile:</strong> {currentEmployee?.mobileNumber}</p>
+              <p><strong>Company:</strong> {currentEmployee?.companyname || "Not provided"}</p>
+              <p><strong>Location:</strong> {currentEmployee?.location || "Not provided"}</p>
+              <button onClick={() => setIsEditing(true)}>Edit Profile</button>
+            </div>
+         )}
+       </div>
         )}
       </div>
     </div>

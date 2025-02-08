@@ -6,22 +6,31 @@ import { freelancerLoginContext } from '../../contexts/freelancerLoginContext';
 
 function Header() {
   const { currentFreelancer, logoutFreelancer, freelancerLoginStatus } = useContext(freelancerLoginContext);
-  const { currentEmployer, logoutEmployer, employerLoginStatus } = useContext(employerLoginContext);
-  
+  const { currentEmployee, logoutEmployer, EmployeeLoginStatus } = useContext(employerLoginContext);
+
   const navigate = useNavigate();
 
   const isFreelancer = freelancerLoginStatus;
-  const isEmployer = employerLoginStatus;
-  const currentUser = isFreelancer ? currentFreelancer : isEmployer ? currentEmployer : null;
+  const isEmployer = EmployeeLoginStatus;
+  const currentUser = isFreelancer ? currentFreelancer : isEmployer ? currentEmployee : null;
   const logoutUser = isFreelancer ? logoutFreelancer : isEmployer ? logoutEmployer : null;
   const userLoginStatus = isFreelancer || isEmployer;
 
   const handleLogout = () => {
     if (logoutUser) {
       logoutUser();  
-      navigate('/');  
+      navigate('/login'); 
     }
   };
+
+  const navigateToDash=()=>{
+    if(currentUser.userType=='Employer'){
+      navigate('/employerdashboard')
+    }
+    else{
+      navigate('/freelancerdashboard')
+    }
+  }
 
   return (
     <div className='head'>
@@ -44,7 +53,9 @@ function Header() {
         ) : (  
           <>
             <span className="username">{currentUser?.username}</span>  { }
+            <button onClick={navigateToDash} className='logout'>DashBoard</button>
             <button onClick={handleLogout} className="logout">Logout</button>
+            
           </>
         )}
       </div>

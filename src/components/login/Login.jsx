@@ -1,9 +1,8 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import { employerLoginContext } from '../../contexts/employerLoginContext';
 import { freelancerLoginContext } from '../../contexts/freelancerLoginContext';
-import { useEffect } from 'react';
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -13,7 +12,7 @@ function Login() {
   const navigate = useNavigate();
 
   const { loginEmployee, EmployeeLoginStatus, err: employerErr } = useContext(employerLoginContext);
-  const { loginFreelancer, FreelancerLoginStatus, err: freelancerErr } = useContext(freelancerLoginContext);
+  const { loginFreelancer, freelancerLoginStatus, err: freelancerErr } = useContext(freelancerLoginContext);
 
   useEffect(() => {
     if (EmployeeLoginStatus) {
@@ -22,12 +21,11 @@ function Login() {
   }, [EmployeeLoginStatus, navigate]);
   
   useEffect(() => {
-    if (FreelancerLoginStatus) {
+    if (freelancerLoginStatus) {
       navigate('/freelancerdashboard');
     }
-  }, [FreelancerLoginStatus, navigate]);
+  }, [freelancerLoginStatus, navigate]);
   
-
   const validateForm = () => {
     let errors = {};
     let isValid = true;
@@ -52,46 +50,52 @@ function Login() {
       try {
         console.log('Login attempt with:', username, password);
 
-        // Fetch employer list
+        // Check employer credentials
         let empRes = await fetch("http://localhost:3000/employerList");
         let employers = await empRes.json();
         let isEmployer = employers.some(emp => emp.fullName === username);
+
+        console.log(isEmployer)
 
         if (isEmployer) {
           console.log('User found in Employer list, attempting Employer login...');
           await loginEmployee({ username, password });
 
-          // Wait for login status update
           if (EmployeeLoginStatus) {
+            setLoginError(false);
             navigate('/employerdashboard');
             return;
           }
         }
 
-        // Fetch freelancer list
+        // Check freelancer credentials (matching based on fullName)
         let freeRes = await fetch("http://localhost:3000/freelancerList");
         let freelancers = await freeRes.json();
+        console.log(freelancers);
         let isFreelancer = freelancers.some(free => free.fullName === username);
 
+        console.log(isFreelancer);
         if (isFreelancer) {
           console.log('User found in Freelancer list, attempting Freelancer login...');
           await loginFreelancer({ username, password });
 
-          // Wait for login status update
-          if (FreelancerLoginStatus) {
+          console.log("freelancerLoginStatus",freelancerLoginStatus);
+
+          if (freelancerLoginStatus) {
+            setLoginError(false);
             navigate('/freelancerdashboard');
             return;
           }
         }
 
-        console.log('User not found in any list or invalid credentials');
-        setLoginError(true);
+        
+        setLoginError(false); 
       } catch (error) {
         console.error('Error logging in:', error);
-        setLoginError(true);
+        setLoginError(true);  
       }
     }
-};
+  };
 
   return (
     <div className="login-container">
@@ -99,15 +103,15 @@ function Login() {
         <h2>Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="username">Username or Email</label>
+            <label htmlFor="username">Username</label>
             <input
               type="text"
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username or email"
+              placeholder="Username"
             />
-            {errors.username && <span className="error" style={{ color: 'red' }}>{errors.username}</span>}
+            {errors.username && <span className="error">{errors.username}</span>}
           </div>
           <div className="form-group">
             <label htmlFor="password">Password</label>
@@ -118,10 +122,10 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
             />
-            {errors.password && <span className="error" style={{ color: 'red' }}>{errors.password}</span>}
+            {errors.password && <span className="error">{errors.password}</span>}
           </div>
           <button type="submit" className="login-button">Login</button>
-          {loginError && <p className="error" style={{ color: 'red' }}>Invalid credentials! Please check your username/email or password.</p>}
+          {loginError && <p className="error">Invalid credentials! Please check your username/email or password.</p>}
         </form>
         <p className="signup-link">
           Don't have an account? <a href="/register">Sign up</a>

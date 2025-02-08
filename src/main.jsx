@@ -7,11 +7,9 @@ import EmployerLoginStore from './contexts/EmployerLoginStore.jsx'
 import FreelancerLoginStore from './contexts/FreelancerLoginStore.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
    <EmployerLoginStore>
     <FreelancerLoginStore>
      <App />
     </FreelancerLoginStore>
    </EmployerLoginStore>
-  </StrictMode>,
 )

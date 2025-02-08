@@ -1,20 +1,50 @@
 {
   "employerList": [
     {
-      "id": "9e8c",
+      "id": "677c",
       "fullName": "ravi",
       "email": "ravi@gmail.com",
-      "mobileNumber": "9030552549",
-      "password": "ravikanth",
-      "userType": "Employer"
+      "mobileNumber": "9087654321",
+      "password": "ravivarma",
+      "userType": "Employer",
+      "joblist": [
+        {
+          "id": 1738949491676,
+          "companyname": "tcs",
+          "jobTitle": "data analyst",
+          "status": "Active",
+          "pay": "6000",
+          "employerId": "677c"
+        },
+        {
+          "id": 1738951858694,
+          "companyname": "tcs",
+          "jobTitle": "fullstack",
+          "status": "Active",
+          "pay": "9000",
+          "employerId": "677c"
+        }
+      ],
+      "companyname": "tcs",
+      "location": "banglore"
     },
     {
-      "id": "93bf",
-      "fullName": "keerthana",
-      "email": "keerthana@gmail.com",
-      "mobileNumber": "1234567890",
-      "password": "keerthana",
-      "userType": "Employer"
+      "id": "a6cc",
+      "fullName": "Kiran",
+      "email": "kiran@gmail.com",
+      "mobileNumber": "9491070035",
+      "password": "kiran1",
+      "userType": "Employer",
+      "joblist": [
+        {
+          "id": 1739002643194,
+          "companyname": "accenture",
+          "jobTitle": "SDE",
+          "status": "Active",
+          "pay": "8000",
+          "employerId": "a6cc"
+        }
+      ]
     }
   ],
   "freelancerList": [
@@ -32,22 +62,6 @@
       "email": "bhanu@gmail.com",
       "mobileNumber": "9030552549",
       "password": "bhanusri",
-      "userType": "Freelancer"
-    },
-    {
-      "id": "47a5",
-      "fullName": "kiran",
-      "email": "kiran@gmail.com",
-      "mobileNumber": "7894561230",
-      "password": "kiran1",
-      "userType": "Freelancer"
-    },
-    {
-      "id": "0020",
-      "fullName": "keerthana_L",
-      "email": "ravi@gmail.com",
-      "mobileNumber": "9030552549",
-      "password": "keerthana",
       "userType": "Freelancer"
     }
   ]
