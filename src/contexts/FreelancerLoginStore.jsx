@@ -55,7 +55,7 @@ function freelancerLoginStore({ children }) {
 
     return (
         <freelancerLoginContext.Provider
-            value={{currentFreelancer,freelancerLoginStatus,loginFreelancer,logoutFreelancer,err}}>
+            value={{currentFreelancer,freelancerLoginStatus,loginFreelancer,logoutFreelancer,setCurrentFreelancer,err}}>
             {children}
         </freelancerLoginContext.Provider>
     );

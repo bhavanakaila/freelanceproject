@@ -30,21 +30,26 @@
     },
     {
       "id": "a6cc",
-      "fullName": "Kiran",
+      "fullName": "Kirankumar",
       "email": "kiran@gmail.com",
       "mobileNumber": "9491070035",
       "password": "kiran1",
       "userType": "Employer",
       "joblist": [
         {
-          "id": 1739002643194,
+          "id": 1739086493968,
           "companyname": "accenture",
-          "jobTitle": "SDE",
+          "jobTitle": "data analyst",
           "status": "Active",
-          "pay": "8000",
+          "pay": "5000",
           "employerId": "a6cc"
         }
-      ]
+      ],
+      "companyname": "accenture",
+      "jobTitle": "data analyst",
+      "status": "Active",
+      "pay": "5000",
+      "location": "banglore"
     }
   ],
   "freelancerList": [
