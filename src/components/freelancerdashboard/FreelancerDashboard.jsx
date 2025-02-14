@@ -3,42 +3,67 @@ import './FreelancerDashboard.css';
 import { useForm } from 'react-hook-form';
 import { FaUserCircle } from "react-icons/fa";
 import { employerLoginContext } from '../../contexts/employerLoginContext';
+import {freelancerLoginContext} from '../../contexts/freelancerLoginContext';
 
 function FreelancerDashboard() {
   const [jobs, setJobs] = useState([]);
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [selectedOption, setSelectedOption] = useState('dashboard');
   const [showModal, setShowModal] = useState(false);
-  const { register, handleSubmit, reset,setValue } = useForm();
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [uploadedProfile, setUploadedProfile] = useState(null);
-  // Sample Freelancer Data (Fetched from JSON)
-  const [freelancer,setFreelancer] = useState( {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "+1234567890",
+  const { setValue ,formState: {errors}} = useForm();
+  const [showEditModal, setShowEditModal] = useState(false);  
+  const {currentFreelancer,setCurrentFreelancer,freelancerLoginStatus} = useContext(freelancerLoginContext)
+  const [isEditing,setIsEditing] = useState(false);
+
+  const { register, handleSubmit, reset } = useForm({
+    defaultValues: currentFreelancer || {} 
   });
+useEffect(() => {
+  if (selectedOption === "profile"  && currentFreelancer) {
+    setValue("fullName", currentFreelancer?.fullName || "");
+    setValue("email", currentFreelancer?.email || "");
+    setValue("mobileNumber", currentFreelancer?.mobileNumber || "");
+  }
+}, [selectedOption, currentFreelancer, setValue]);
+  
+  const onSubmitProfile = async (data) => {
+    if (!currentFreelancer?.id) {
+      console.error("Freelancer ID is missing");
+      return;
+    }
 
-  const handleEditClick = () => {
-    setShowEditModal(true);
-    setValue("name", freelancer.name);
-    setValue("email", freelancer.email);
-    setValue("phone", freelancer.phone);
-  };
-  const onSubmit = (data) => {
-    console.log("Profile Data:", data);
-    setShowModal(false);
-    setFreelancer(data);
-    setUploadedProfile(data);
-    setShowEditModal(false);
-    reset();
+    try {
+      const updatedFreelancer = { ...currentFreelancer, ...data };
+      console.log(updatedFreelancer);
+      const response = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedFreelancer),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update freelancer profile");
+      }
+
+      const updatedData = await response.json();
+      setCurrentFreelancer(updatedData);
+      setIsEditing(false);
+      setShowEditModal(false);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
 
+  // const handleEditClick = () => {
+  //   setShowEditModal(true);
+  //   setIsEditing(true);
+  // };
+  
   const { JobListing } = useContext(employerLoginContext);
-
   const [searchQuery, setSearchQuery] = useState('');
 
-// Filter jobs based on search query
 const filteredJobs = Array.isArray(JobListing)
   ? JobListing.filter(job =>
       job.jobTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -46,18 +71,95 @@ const filteredJobs = Array.isArray(JobListing)
       job.status.toLowerCase().includes(searchQuery.toLowerCase())
     )
   : [];
-  // JobListing.forEach(job => {
-  //   console.log(job.companyname, job.jobTitle, job.status, job.pay);
-  // });
 
-  const [userProfile, setUserProfile] = useState({
-    name: 'John Doe',
-    skills: ['React', 'Node.js', 'Photoshop'],
-    experience: '5 years',
-    portfolio: 'https://example.com',
-    role: 'Freelancer',
-  });
+  // freelancer profile data
+  const [freelancerdetails,setfreelancerdetails]=useState([])
+  const [uploadedProfile, setUploadedProfile] = useState(null);
 
+  async function details(freelancerData) {
+    try {
+      let res = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`);
+      let data = await res.json();
+  
+      // Create a new profileList object without the basic details
+      const profileList = {
+        fullName: freelancerData.fullName,
+        email: freelancerData.email,
+        workExperience: freelancerData.workExperience,
+        skills: freelancerData.skills,
+        github: freelancerData.github,
+        pastCompanies: freelancerData.pastCompanies,
+        description: freelancerData.description
+      };
+  
+      // Update the freelancer entry with the new profileList
+      data.profileList = profileList;
+  
+      res = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+  
+      setUploadedProfile(profileList);
+      setShowModal(false);
+      setShowEditModal(false);
+      reset();
+    } catch (error) {
+      console.error("Error updating freelancer profile:", error);
+    }
+  }
+  
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const res = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`);
+        const data = await res.json();
+  
+        if (data.profileList) {
+          setfreelancerdetails(data.profileList);
+          setUploadedProfile(data.profileList);
+        } else {
+          setfreelancerdetails({});
+        }
+      } catch (error) {
+        console.error("Error fetching freelancer profile details:", error);
+      }
+    };
+  
+    if (currentFreelancer?.id) {
+      fetchDetails();
+    }
+  }, [currentFreelancer]);
+  
+  
+  const deleteProfile = async () => {
+    try {
+      let res = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`);
+      let data = await res.json();
+  
+      // Remove profile details
+      delete data.profileList;
+  
+      // Update the freelancer entry in db.json
+      await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+  
+      // Clear state after deletion
+      setUploadedProfile(null);
+      setfreelancerdetails([]);
+    } catch (error) {
+      console.error("Error deleting freelancer profile:", error);
+    }
+  };
+  
 
   const applyToJob = jobId => {
     const job = jobs.find(job => job.id === jobId);
@@ -66,10 +168,11 @@ const filteredJobs = Array.isArray(JobListing)
     }
   };
 
-  const handleRoleChange = e => {
-    setUserProfile({ ...userProfile, role: e.target.value });
-  };
+  // const handleRoleChange = e => {
+  //   setUserProfile({ ...userProfile, role: e.target.value });
+  // };
 
+  
   return (
     <div className="dashboard">
       <div className="sidebar">
@@ -77,16 +180,15 @@ const filteredJobs = Array.isArray(JobListing)
           <li className={selectedOption === 'dashboard' ? 'active' : ''} onClick={() => setSelectedOption('dashboard')}>Dashboard</li>
           <li className={selectedOption === 'profile' ? 'active' : ''} onClick={() => setSelectedOption('profile')}>Profile</li>
           <li className={selectedOption === 'applied-jobs' ? 'active' : ''} onClick={() => setSelectedOption('applied-jobs')}>Applied Jobs</li>
-          {userProfile.role === 'Employer' && (
+          {/* {userProfile.role === 'Employer' && (
             <li className={selectedOption === 'create-job' ? 'active' : ''} onClick={() => setSelectedOption('create-job')}>Create Job</li>
-          )}
+          )} */}
         </ul>
       </div>
       <div className="main-content">
       {selectedOption === 'dashboard' && (
   <section className="job-listings">
     <h2>Job Listings</h2>
-    {/* Search Input */}
     <div className="search-container">
       <input
         type="text"
@@ -115,55 +217,51 @@ const filteredJobs = Array.isArray(JobListing)
 )}
 
     {selectedOption === 'profile' && (
+      
       <section className="profile ">
         <h2>User Profile</h2>
-        <div className="basic flex border rounded bg-white">
+        <div className="basic border rounded bg-white">
       {/* User Profile Image */}
       <div className='usericon'> <FaUserCircle size={140}/> </div>
       {/* Freelancer Basic Details */}
-      <div className="flex-grow">
-        <p><strong>Name:</strong> {freelancer.name}</p>
-        <p><strong>Email:</strong> {freelancer.email}</p>
-        <p><strong>Phone:</strong> {freelancer.phone}</p>
-        <button onClick={handleEditClick} className="editbt">Edit Profile</button>
+      {isEditing? (
+        <form onSubmit={handleSubmit(onSubmitProfile)} className="space-y-4">
+        <div className="form-group">
+                  <label>Name:</label>
+                  <input type="text" {...register("fullName")} />
+        </div>
+                <div className="form-group">
+                  <label>Email:</label>
+                  <input type="email" {...register("email")} />
+                </div>
+                <div className="form-group">
+                  <label>Mobile:</label>
+                  <input type="text" {...register("mobileNumber")} />
+                </div>
+
+        <div className="editb">
+          <button type="button"onClick={()=>{reset(); setIsEditing(false);}} className="editbtn">Cancel</button>
+          <button type="submit"className="editbtn">Save Changes</button>
+        </div>
+      </form>
+      ):(
+        <div className="flex-grow ">
+      
+        <p><strong>Name:</strong> {currentFreelancer?.fullName}</p>
+        <p><strong>Email:</strong> {currentFreelancer?.email}</p>
+        <p><strong>Phone:</strong> {currentFreelancer?.mobileNumber}</p>
+        <button onClick={()=>setIsEditing(true)} className="editbt">Edit Profile</button>
       </div>
+      )}
 
       {/* Edit Profile Modal */}
-      {showEditModal && (
-        <div className="editmodal flex bg-opacity-50">
-          <div className="edit bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className=" mb-4">Edit Profile</h2>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <input
-                {...register("name")}
-                className="w-full p-2 border rounded"
-                placeholder="Name"
-              />
-              <input
-                {...register("email")}
-                className="w-full p-2 border rounded"
-                placeholder="Email"
-              />
-              <input
-                {...register("phone")}
-                className="w-full p-2 border rounded"
-                placeholder="Phone"
-              />
-
-              <div className="editb">
-                <button type="button"onClick={() => setShowEditModal(false)} className="editbtn">Cancel</button>
-                <button type="submit"className="editbtn">Save Changes</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      
     </div>
     <div className="upload border rounded">
               {uploadedProfile ? (
                 <div className="uploaded-details border rounded p-4">
                   <h3>Uploaded Profile Details</h3>
-                  <p><strong>Name:</strong> {uploadedProfile.name}</p>
+                  <p><strong>Name:</strong> {uploadedProfile.fullName}</p>
                   <p><strong>Email:</strong> {uploadedProfile.email}</p>
                   <p><strong>Work Experience:</strong> {uploadedProfile.workExperience} years</p>
                   <p><strong>Skills:</strong> {uploadedProfile.skills}</p>
@@ -172,7 +270,8 @@ const filteredJobs = Array.isArray(JobListing)
                   <p><strong>Description:</strong> {uploadedProfile.description}</p>
                   <div className="action d-flex">
                     <button onClick={() => setShowModal(true)} className="editbtn">Edit</button>
-                    <button onClick={() => setUploadedProfile(null)} className="deletebtn">Delete</button>
+                    <button onClick={deleteProfile} className="deletebtn">Delete</button>
+
                   </div>
                 </div>
               ) : (
@@ -180,13 +279,11 @@ const filteredJobs = Array.isArray(JobListing)
                   <button onClick={() => setShowModal(true)} className="uploadprofile">Upload Your Profile +</button>
                 </div>
               )}
-
-      {/* Modal */}
       {showModal && (
                 <div className="uploadmodal">
                   <div className="upload-details">
                     <h2>Upload Your Profile</h2>
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={handleSubmit(details)} className="space-y-4">
                       <input
                         {...register("name")}
                         defaultValue={uploadedProfile ? uploadedProfile.name : ''}

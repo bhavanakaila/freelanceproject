@@ -81,6 +81,7 @@
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-left: 16px;
 }
 
 .search-button:hover {

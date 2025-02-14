@@ -1,7 +1,7 @@
 /* EmployerDashboard.css */
 .dashboard-container {
     display: flex;
-    height: 100vh;
+    height: auto;
     font-family: Arial, sans-serif;
   }
   
@@ -40,12 +40,7 @@
     flex: 1;
     padding: 20px;
     background-color: #f4f4f4;
-  }
-  
- 
-  
-  
-  
+  }  
   .freelancer-profiles .search-bar {
     margin-bottom: 20px;
   }
@@ -55,8 +50,7 @@
     width: 300px;
     border: 1px solid #ccc;
     border-radius: 5px;
-  }
-  
+  }  
   .freelancer-profiles .search-bar button {
     padding: 10px 20px;
     background-color: #1abc9c;
@@ -65,26 +59,22 @@
     border-radius: 5px;
     cursor: pointer;
     margin-left: 10px;
-  }
-  
+  }  
   .freelancer-list, .job-list {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-  }
-  
+  }  
   .freelancer-card, .job-card {
     background-color: white;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     width: 300px;
-  }
-  
+  }  
   .freelancer-card h4, .job-card h4 {
     margin-bottom: 10px;
-  }
-  
+  }  
   .freelancer-card button, .job-card button {
     padding: 10px 20px;
     background-color: #1abc9c;
@@ -146,7 +136,9 @@
     cursor: pointer;
     margin-right: 10px;
   }
-  
+  .editbuttn{
+    gap: 70%;
+  }
   button:hover {
     background-color: #0056b3;
   }

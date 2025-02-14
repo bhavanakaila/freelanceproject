@@ -25,19 +25,26 @@ function EmployerDashboard() {
       console.error("Employer ID is missing");
       return;
     }
-
+  
     try {
+      // Fetch the current employer data
       const response = await fetch(`http://localhost:3000/employerList/${currentEmployee.id}`);
       if (!response.ok) {
         throw new Error("Failed to fetch current employer data");
       }
       const existingData = await response.json();
-
+  
+      // Create an updated employer object with only the profile fields
       const updatedEmployer = {
-        ...existingData,
-        ...data,
+        ...existingData, // Keep existing data
+        fullName: data.fullName, // Update profile fields
+        email: data.email,
+        mobileNumber: data.mobileNumber,
+        companyname: data.companyname,
+        location: data.location,
       };
-
+  
+      // Update the employer entry in the database
       const updateResponse = await fetch(`http://localhost:3000/employerList/${currentEmployee.id}`, {
         method: "PUT",
         headers: {
@@ -45,14 +52,14 @@ function EmployerDashboard() {
         },
         body: JSON.stringify(updatedEmployer),
       });
-
+  
       if (!updateResponse.ok) {
         throw new Error("Failed to update employer profile");
       }
-
+  
       const updatedEmployerData = await updateResponse.json();
-      setCurrentEmployee(updatedEmployerData);
-      setIsEditing(false);
+      setCurrentEmployee(updatedEmployerData); // Update state
+      setIsEditing(false); // Exit edit mode
     } catch (error) {
       console.error("Error updating profile:", error);
     }
@@ -65,27 +72,28 @@ function EmployerDashboard() {
     pay: "",
   });
 
+  //job listing
   const [jobPostings, setJobPostings] = useState([]);
 
   const freelancers = [
-    {
-      id: 1,
-      name: "John Doe",
-      skills: ["React", "Node.js", "UI/UX"],
-      experience: "5 years",
-      hourlyRate: "$50",
-      rating: 4.8,
-      portfolio: "https://example.com",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      skills: ["Python", "Data Analysis", "Machine Learning"],
-      experience: "3 years",
-      hourlyRate: "$40",
-      rating: 4.5,
-      portfolio: "https://example.com",
-    },
+    // {
+    //   id: 1,
+    //   name: "John Doe",
+    //   skills: ["React", "Node.js", "UI/UX"],
+    //   experience: "5 years",
+    //   hourlyRate: "$50",
+    //   rating: 4.8,
+    //   portfolio: "https://example.com",
+    // },
+    // {
+    //   id: 2,
+    //   name: "Jane Smith",
+    //   skills: ["Python", "Data Analysis", "Machine Learning"],
+    //   experience: "3 years",
+    //   hourlyRate: "$40",
+    //   rating: 4.5,
+    //   portfolio: "https://example.com",
+    // },
   ];
 
   async function jobListing(jobdetails) {
@@ -343,8 +351,10 @@ function EmployerDashboard() {
                   <label>Location:</label>
                   <input type="text" {...register("location")} />
                 </div>
-                <button type="submit">Save</button>
-                <button type="button" onClick={() => { reset(); setIsEditing(false); }}>Cancel</button>
+               <div className="d-flex editbuttn">
+               <button type="submit">Save</button>
+               <button type="button" onClick={() => { reset(); setIsEditing(false); }}>Cancel</button>
+               </div>
               </form>
             ) : (
               <div className="profile-details">

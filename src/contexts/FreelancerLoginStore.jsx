@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { freelancerLoginContext } from "./freelancerLoginContext";
+import { useEffect } from "react";
 
 function freelancerLoginStore({ children }) {
     const [currentFreelancer, setCurrentFreelancer] = useState(null);
@@ -24,28 +25,43 @@ function freelancerLoginStore({ children }) {
        
     // };
     async function loginFreelancer(user) {
-        try {
-            console.log(user);
-            let res = await fetch(`http://localhost:3000/freelancerList?fullName=${user.username}&password=${user.password}`);
-            
-            if (!res.ok) {
-                throw new Error(`HTTP error! Status: ${res.status}`);
-            }
-    
-            let userlist = await res.json();
-            console.log("userlist",userlist);
-            if(userlist.length1!=0){
-                setCurrentFreelancer(userlist);
-                setFreelancerLoginStatus(true);
-                setErr("");
-            }
-    
-            return userlist; // Return the result so the calling function can use it.
-        } catch (error) {
-            console.error("Error logging in:", error);
-            return null; // Handle errors gracefully
+        fetch("http://localhost:3000/freelancerList")
+      .then((res) => res.json())
+      .then((data) => {
+        const freelancer = data.find(emp => emp.fullName === user.username && emp.password === user.password);
+        console.log(freelancer);
+        if (!freelancer) {
+          setCurrentFreelancer(null);
+          setFreelancerLoginStatus(false);
+          setErr("Invalid Username or Password");
+        } else {
+          setCurrentFreelancer(freelancer);
+          setFreelancerLoginStatus(true);
+          setErr("");
         }
+      });
     }
+    
+    useEffect(() => {
+        console.log("Freelancer login status updated:", freelancerLoginStatus);
+    }, [freelancerLoginStatus]);
+    
+    async function fetchFreelancer() {
+        if (!currentFreelancer?.id) return;
+        try {
+          const res = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`);
+          if (!res.ok) {
+            throw new Error("Failed to fetch from freelancers");
+          }
+          const data = await res.json();
+        
+          setCurrentFreelancer(data);
+        } catch (err) {
+          setErr(err.message);
+        }
+      }
+    
+      fetchFreelancer();
     
     const logoutFreelancer = () => {
         setCurrentFreelancer(null);

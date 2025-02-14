@@ -7,12 +7,7 @@ import Login from './components/login/Login';
 import Register from './components/register/Register';
 import EmployerDashboard from './components/employerdashboard/EmployerDashboard';
 import FreelancerDashboard from './components/freelancerdashboard/Freelancerdashboard';
-
-
 import './App.css'
-import EmployerProfile from './components/employerprofile/EmployerProfile';
-import FreelancerProfile from './components/freelancerprofile/FreelancerProfile';
-
 function App() {
   const browserRouter=createBrowserRouter([
     {
@@ -39,14 +34,6 @@ function App() {
         {
           path:'/freelancerdashboard',
           element:<FreelancerDashboard />
-        },
-        {
-          path:'/employerprofile',
-          element:<EmployerProfile />
-        },
-        {
-          path:'/freelancerprofile',
-          element:<FreelancerProfile />
         }
       ]
     }

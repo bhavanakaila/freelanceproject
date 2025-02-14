@@ -79,13 +79,13 @@ function Login() {
           console.log('User found in Freelancer list, attempting Freelancer login...');
           await loginFreelancer({ username, password });
 
-          console.log("freelancerLoginStatus",freelancerLoginStatus);
 
           if (freelancerLoginStatus) {
-            setLoginError(false);
+            // setLoginError(false);
             navigate('/freelancerdashboard');
             return;
           }
+          
         }
 
         

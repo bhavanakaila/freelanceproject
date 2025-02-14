@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import './Header.css';
 import { employerLoginContext } from '../../contexts/employerLoginContext';
 import { freelancerLoginContext } from '../../contexts/freelancerLoginContext';
@@ -9,12 +9,18 @@ function Header() {
   const { currentEmployee, logoutEmployer, EmployeeLoginStatus } = useContext(employerLoginContext);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const isFreelancer = freelancerLoginStatus;
   const isEmployer = EmployeeLoginStatus;
   const currentUser = isFreelancer ? currentFreelancer : isEmployer ? currentEmployee : null;
   const logoutUser = isFreelancer ? logoutFreelancer : isEmployer ? logoutEmployer : null;
   const userLoginStatus = isFreelancer || isEmployer;
+
+
+  const freelancerDashboardPath = '/freelancerdashboard';
+  const employerDashboardPath = '/employerdashboard';
+  const isOnDashboard = location.pathname === freelancerDashboardPath || location.pathname === employerDashboardPath;
 
   const handleLogout = () => {
     if (logoutUser) {
@@ -53,7 +59,7 @@ function Header() {
         ) : (  
           <>
             <span className="username">{currentUser?.username}</span>  { }
-            <button onClick={navigateToDash} className='logout'>DashBoard</button>
+            {!isOnDashboard && <button onClick={navigateToDash} className='logout'>DashBoard</button>}
             <button onClick={handleLogout} className="logout">Logout</button>
             
           </>
