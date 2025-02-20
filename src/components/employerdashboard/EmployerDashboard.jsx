@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
 import { employerLoginContext } from '../../contexts/employerLoginContext';
+import { freelancerLoginContext } from "../../contexts/freelancerLoginContext";
 import { useForm } from "react-hook-form";
 import "./EmployerDashboard.css";
+import { FaRegUser } from "react-icons/fa";
 
 function EmployerDashboard() {
   const [activeSection, setActiveSection] = useState("dashboard");
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
   const { currentEmployee, setCurrentEmployee } = useContext(employerLoginContext);
   const [isEditing, setIsEditing] = useState(false);
-  
+  const {profileListing} = useContext(freelancerLoginContext)
+  const [selectedFreelancer,setSelectedFreelancer]=useState(null)
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (activeSection === "profile" && currentEmployee) {
@@ -72,30 +76,23 @@ function EmployerDashboard() {
     pay: "",
   });
 
+  const handleViewProfile = (freelancer) => {
+    setSelectedFreelancer(freelancer);
+  };
+
+  const handleCloseProfile = () => {
+    setSelectedFreelancer(null);
+  };
+  const filteredFreelancers = profileListing.filter((freelancer) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      freelancer.fullName.toLowerCase().includes(query) ||
+      freelancer.pastCompanies?.toLowerCase().includes(query) ||
+      freelancer.skills?.toLowerCase().includes(query)
+    );
+  });
   //job listing
-  const [jobPostings, setJobPostings] = useState([]);
-
-  const freelancers = [
-    // {
-    //   id: 1,
-    //   name: "John Doe",
-    //   skills: ["React", "Node.js", "UI/UX"],
-    //   experience: "5 years",
-    //   hourlyRate: "$50",
-    //   rating: 4.8,
-    //   portfolio: "https://example.com",
-    // },
-    // {
-    //   id: 2,
-    //   name: "Jane Smith",
-    //   skills: ["Python", "Data Analysis", "Machine Learning"],
-    //   experience: "3 years",
-    //   hourlyRate: "$40",
-    //   rating: 4.5,
-    //   portfolio: "https://example.com",
-    // },
-  ];
-
+   const [jobPostings, setJobPostings] = useState([]);
   async function jobListing(jobdetails) {
     let res = await fetch(`http://localhost:3000/employerList/${currentEmployee.id}`);
     let data = await res.json();
@@ -206,27 +203,42 @@ function EmployerDashboard() {
       </div>
 
       <div className="main-content">
-        {activeSection === "dashboard" && (
+      {activeSection === "dashboard" && (
           <div className="freelancer-profiles">
             <h3>Freelancer Profiles</h3>
             <div className="search-bar">
-              <input type="text" placeholder="Search freelancers..." />
+              <input type="text" placeholder="Search freelancers..." value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
               <button>Search</button>
             </div>
             <div className="freelancer-list">
-              {freelancers.map((freelancer) => (
-                <div key={freelancer.id} className="freelancer-card">
-                  <h4>{freelancer.name}</h4>
-                  <p>Skills: {freelancer.skills.join(", ")}</p>
-                  <p>Experience: {freelancer.experience}</p>
-                  <p>Hourly Rate: {freelancer.hourlyRate}</p>
-                  <p>Rating: {freelancer.rating}</p>
-                  <a href={freelancer.portfolio} target="_blank" rel="noopener noreferrer">
-                    View Portfolio
-                  </a>
-                  <button>Shortlist</button>
+            {filteredFreelancers.map((freelancer, index) => (
+                <div key={index} className="freelancer-card">
+                  <div className="usericon">
+                    <FaRegUser size={70} />
+                  </div>
+                  <div className="freelancer-card-right">
+                    <h4>{freelancer.fullName}</h4>
+                    <p>{freelancer.description}</p>
+                    <button onClick={() => handleViewProfile(freelancer)}>View Profile</button>
+                  </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+        {selectedFreelancer && (
+          <div className="freelancer-profile-modal">
+            <div className="modal-content">
+              <h3>{selectedFreelancer.fullName}</h3>
+              <p><strong>Email:</strong> {selectedFreelancer.email}</p>
+              <p><strong>Work Experience:</strong> {selectedFreelancer.workExperience} years</p>
+              <p><strong>Skills:</strong> {selectedFreelancer.skills}</p>
+              <p><strong>GitHub:</strong> <a href={selectedFreelancer.github} target="_blank" rel="noopener noreferrer">{selectedFreelancer.github}</a></p>
+              <p><strong>Past Companies:</strong> {selectedFreelancer.pastCompanies}</p>
+              <p><strong>Description:</strong> {selectedFreelancer.description}</p>
+              <button onClick={handleCloseProfile}>Close</button>
             </div>
           </div>
         )}

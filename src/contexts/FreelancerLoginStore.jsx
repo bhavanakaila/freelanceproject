@@ -6,24 +6,8 @@ function freelancerLoginStore({ children }) {
     const [currentFreelancer, setCurrentFreelancer] = useState(null);
     const [freelancerLoginStatus, setFreelancerLoginStatus] = useState(false);
     const [err, setErr] = useState("");
+    const [profileListing,setProfileListing]=useState("");
 
-    // const loginFreelancer=(user)=>{
-    //     // fetch("http://localhost:3000/freelancerList")
-    //     // .then((res)=>res.json())
-    //     // .then((data)=>{
-    //     //     const freelancer=data.find(free=>free.fullName ===user.username && free.password ===user.password);
-    //     //     if (!freelancer) {
-    //     //         setCurrentFreelancer(null);
-    //     //         setFreelancerLoginStatus(false);
-    //     //         setErr("Invalid Username or Password");
-    //     //       } else {
-    //     //         setCurrentFreelancer(freelancer);
-    //     //         setFreelancerLoginStatus(true);
-    //     //         setErr("");
-    //     //       }
-    //     // });
-       
-    // };
     async function loginFreelancer(user) {
         fetch("http://localhost:3000/freelancerList")
       .then((res) => res.json())
@@ -46,22 +30,26 @@ function freelancerLoginStore({ children }) {
         console.log("Freelancer login status updated:", freelancerLoginStatus);
     }, [freelancerLoginStatus]);
     
-    async function fetchFreelancer() {
-        if (!currentFreelancer?.id) return;
-        try {
-          const res = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`);
-          if (!res.ok) {
-            throw new Error("Failed to fetch from freelancers");
+    useEffect(()=>{
+      async function fetchUsers(){
+        try{
+          let res= await fetch('http://localhost:3000/freelancerList');
+
+          if(!res.ok){
+            throw new Error(`HTTP error! Status: ${res.status}`);
           }
-          const data = await res.json();
-        
-          setCurrentFreelancer(data);
-        } catch (err) {
-          setErr(err.message);
+
+          let freelancerList=await res.json();
+          const allProfiles = freelancerList.flatMap(user => user.profileList || []);
+          setProfileListing(allProfiles);
+          console.log("allProfiles",allProfiles);
+        }
+        catch(error){
+          console.log("There is an error while fetching data")
         }
       }
-    
-      fetchFreelancer();
+      fetchUsers();
+    },[]);
     
     const logoutFreelancer = () => {
         setCurrentFreelancer(null);
@@ -71,7 +59,7 @@ function freelancerLoginStore({ children }) {
 
     return (
         <freelancerLoginContext.Provider
-            value={{currentFreelancer,freelancerLoginStatus,loginFreelancer,logoutFreelancer,setCurrentFreelancer,err}}>
+            value={{currentFreelancer,freelancerLoginStatus,loginFreelancer,logoutFreelancer,setCurrentFreelancer,profileListing,err}}>
             {children}
         </freelancerLoginContext.Provider>
     );

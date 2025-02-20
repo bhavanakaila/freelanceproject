@@ -60,36 +60,36 @@
   "freelancerList": [
     {
       "id": "e7d8",
-      "fullName": "Bhavana",
+      "fullName": "Kaila Bhavana",
       "email": "bhavanakaila046@gmail.com",
       "mobileNumber": "9030552549",
       "password": "bhavana",
       "userType": "Freelancer",
       "profileList": {
-        "fullName": "Bhavana",
+        "fullName": "Kaila Bhavana",
         "email": "bhavanakaila046@gmail.com",
         "workExperience": "4",
         "skills": "CPP,full stack,java",
         "github": "https://example.com",
         "pastCompanies": "Capgemini",
-        "description": "zdxfcg"
+        "description": "an experienced professional with perations, and driving business growth, gement, team leadership, strategic planning, etc.]. My ability to adapt to dynamic environments and implement effective solutions has helped organizations achieve their goals efficiently. I am now seeking a new opportunity where I can leverage my skills and leadership to contribute to a forward-thinking company."
       }
     },
     {
       "id": "2527",
-      "fullName": "bhanusri",
+      "fullName": "Bhanusri",
       "email": "bhanu@gmail.com",
       "mobileNumber": "9030552549",
       "password": "bhanusri",
       "userType": "Freelancer",
       "profileList": {
-        "fullName": "bhanusri",
+        "fullName": "Bhanusri",
         "email": "bhanu@gmail.com",
         "workExperience": "4",
         "skills": "css,html",
         "github": "https://example.com",
-        "pastCompanies": "tcs",
-        "description": "aesrdfgjh"
+        "pastCompanies": "TCS",
+        "description": "an experienced professional with a strong background ing operations, and ls like project management, to a forward-thinking company."
       }
     }
   ]

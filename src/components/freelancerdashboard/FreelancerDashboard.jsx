@@ -12,7 +12,7 @@ function FreelancerDashboard() {
   const [showModal, setShowModal] = useState(false);
   const { setValue ,formState: {errors}} = useForm();
   const [showEditModal, setShowEditModal] = useState(false);  
-  const {currentFreelancer,setCurrentFreelancer,freelancerLoginStatus} = useContext(freelancerLoginContext)
+  const {currentFreelancer,setCurrentFreelancer} = useContext(freelancerLoginContext)
   const [isEditing,setIsEditing] = useState(false);
 
   const { register, handleSubmit, reset } = useForm({
@@ -71,8 +71,6 @@ const filteredJobs = Array.isArray(JobListing)
       job.status.toLowerCase().includes(searchQuery.toLowerCase())
     )
   : [];
-
-  // freelancer profile data
   const [freelancerdetails,setfreelancerdetails]=useState([])
   const [uploadedProfile, setUploadedProfile] = useState(null);
 
