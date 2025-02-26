@@ -6,10 +6,15 @@
   background: linear-gradient(90deg, #2f0f5a, #5a189a); 
 }
 
-.logo {
-  padding: 5px;
-  background-color: white;
-}
+/* .logo {
+ background-color: white; 
+} */
+ .name{
+  margin-top: 10px;
+  margin-left: 6px;
+  color: rgb(240, 242, 240);
+  font-family: fantasy;
+ }
 
 .logo img {
   display: block; 

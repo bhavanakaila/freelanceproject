@@ -323,7 +323,7 @@ function EmployerDashboard() {
           </div>
         )}
 
-        {activeSection === "shortlisted" && (
+        {/* {activeSection === "shortlisted" && (
           <div className="shortlisted-freelancers">
             <h3>Shortlisted Freelancers</h3>
             <div className="freelancer-list">
@@ -336,7 +336,7 @@ function EmployerDashboard() {
               ))}
             </div>
           </div>
-        )}
+        )} */}
 
         {activeSection === "profile" && (
           <div className="employer-profile">

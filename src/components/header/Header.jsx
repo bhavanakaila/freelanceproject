@@ -40,15 +40,10 @@ function Header() {
 
   return (
     <div className='head'>
-      <div className="logo">
-        <img 
-          src="https://cdn2.iconfinder.com/data/icons/project-management-26/48/30-strategy-256.png" 
-          height={40} 
-          width={50} 
-          alt="Logo" 
-          onClick={() => navigate('/')}
-          style={{ cursor: 'pointer' }}
-        />
+      <div className="logo d-flex">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2KlKcWFkYzF1zMopQFL68WtIp_RSCqNN_bfxypNxd0jX5j6IZwYXXjpiFZnjQyYapBh4&usqp=CAU" 
+          height={50} width={50} alt="Logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}/>
+          <h4 className='name' onClick={() => navigate('/')}>FreelanceHub</h4>
       </div>
       <div className="auth-buttons">
         {!userLoginStatus ? (  
