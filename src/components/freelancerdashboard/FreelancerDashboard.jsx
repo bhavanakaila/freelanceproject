@@ -14,7 +14,9 @@ function FreelancerDashboard() {
   const [showEditModal, setShowEditModal] = useState(false);  
   const {currentFreelancer,setCurrentFreelancer} = useContext(freelancerLoginContext)
   const [isEditing,setIsEditing] = useState(false);
-
+  const [selectedJobId, setSelectedJobId] = useState(null);
+ 
+const [showApplyModal, setShowApplyModal] = useState(false); 
   const { register, handleSubmit, reset } = useForm({
     defaultValues: currentFreelancer || {} 
   });
@@ -73,7 +75,112 @@ const filteredJobs = Array.isArray(JobListing)
   : [];
   const [freelancerdetails,setfreelancerdetails]=useState([])
   const [uploadedProfile, setUploadedProfile] = useState(null);
+   // Function to handle the "Apply Now" button click
+   const handleApplyClick = (jobId) => {
+    console.log(jobId)
+    setSelectedJobId(jobId);
+    // Reset the form fields to empty values
+    reset({
+      fullName: currentFreelancer.fullName,
+      email: currentFreelancer.email,
+      phone: "",
+      skills: "",
+      portfolioUrl: "",
+      experience: "",
+      rate: "",
+      resumeUrl: "",
+      availability: "",
+    });
 
+    setShowApplyModal(true);
+
+  };
+
+  const handleProposalSubmit = async (data) => {
+    try {
+      const proposalData = {
+        jobId: selectedJobId,
+        freelancerId: currentFreelancer.id,
+        status: 'Pending',
+        fullName: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        skills: data.skills,
+        portfolioUrl: data.portfolioUrl,
+        experience: data.experience,
+        rate: data.rate,
+        resumeUrl: data.resumeUrl,
+        availability: data.availability,
+      };
+  
+      console.log("Fetching employer list to find the job..."); // Debugging
+  
+      // Fetch all employers to find the one with the job
+      const employerResponse = await fetch('http://localhost:3000/employerList');
+      
+      if (!employerResponse.ok) {
+        throw new Error('Failed to fetch employer list');
+      }
+  
+      const employers = await employerResponse.json();
+  
+      // Find the employer and job
+      let job = null;
+      let employer = null;
+  
+      for (const emp of employers) {
+        // Check if emp.joblist exists and is an array
+        if (emp.joblist && Array.isArray(emp.joblist)) {
+          const foundJob = emp.joblist.find(j => j.id === selectedJobId);
+          if (foundJob) {
+            job = foundJob;
+            employer = emp;
+            break;
+          }
+        }
+      }
+  
+      if (!job || !employer) {
+        throw new Error('Job not found');
+      }
+  
+      console.log("Job Data:", job); // Debugging
+      console.log("Employer Data:", employer); // Debugging
+  
+      // Add the application to the employer's joblist
+      const updatedJobList = employer.joblist.map(jobItem => {
+        if (jobItem.id === selectedJobId) {
+          if (!jobItem.applications) {
+            jobItem.applications = [];
+          }
+          jobItem.applications.push(proposalData);
+        }
+        return jobItem;
+      });
+  
+      // Update the employer's data
+      const updatedEmployer = { ...employer, joblist: updatedJobList };
+  
+      const updateResponse = await fetch(`http://localhost:3000/employerList/${employer.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedEmployer),
+      });
+  
+      if (!updateResponse.ok) {
+        throw new Error('Failed to update employer data');
+      }
+  
+      setShowApplyModal(false);
+      setSelectedJobId(null);
+      alert('Proposal submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting proposal:', error.message);
+      alert(`Error: ${error.message}`);
+    }
+  };
   async function details(freelancerData) {
     try {
       let res = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`);
@@ -206,7 +313,7 @@ const filteredJobs = Array.isArray(JobListing)
             <p className='fs-5 fst-normal'>Company: {job.companyname}</p>
             <p className='fs-5 fst-normal'>Status: {job.status}</p>
             <p className='fs-5 fst-normal'>Pay: {job.pay}</p>
-            <button onClick={() => applyToJob(job.id)}>Apply Now</button>
+            <button onClick={() => handleApplyClick(job.id)}>Apply Now</button>
           </div>
         ))
       )}
@@ -350,7 +457,76 @@ const filteredJobs = Array.isArray(JobListing)
             ))}
           </section>
         )}
+        
       </div>
+      {showApplyModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Apply for Job</h2>
+            <form onSubmit={handleSubmit(handleProposalSubmit)}>
+              <div className="form-group">
+                <label>Full Name</label>
+                <input {...register("fullName", { required: true })} />
+                {errors.fullName && <span>This field is required</span>}
+              </div>
+              <div className="form-group">
+                <label>Email</label>
+                <input {...register("email", { required: true })} />
+                {errors.email && <span>This field is required</span>}
+              </div>
+              <div className="form-group">
+          <label>Phone Number</label>
+          <input type="tel" {...register("phone", { required: true })} />
+          {errors.phone && <span>This field is required</span>}
+        </div>
+
+        <div className="form-group">
+          <label>Skills</label>
+          <input {...register("skills", { required: true })} />
+          {errors.skills && <span>This field is required</span>}
+        </div>
+
+        <div className="form-group">
+          <label>Portfolio (URL)</label>
+          <input type="url" {...register("portfolioUrl", { required: false })} />
+        </div>
+
+        <div className="form-group">
+          <label>Work Experience (Years)</label>
+          <input type="number" {...register("experience", { required: true })} />
+          {errors.experience && <span>This field is required</span>}
+        </div>
+
+        <div className="form-group">
+          <label>Expected Rate (per hour)</label>
+          <input type="number" {...register("rate", { required: true })} />
+          {errors.rate && <span>This field is required</span>}
+        </div>
+
+
+        <div className="form-group">
+          <label>Resume (URL)</label>
+          <input type="url" {...register("resumeUrl", { required: true })} />
+          {errors.resumeUrl && <span>This field is required</span>}
+        </div>
+
+        <div className="form-group">
+          <label>Availability</label>
+          <select {...register("availability", { required: true })}>
+            <option value="full-time">Full-Time</option>
+            <option value="part-time">Part-Time</option>
+            <option value="project-based">Project-Based</option>
+          </select>
+          {errors.availability && <span>This field is required</span>}
+        </div>
+
+        <button type="submit" >Submit Proposal</button>
+
+              <button type="button" onClick={() => setShowApplyModal(false)}>Close</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
