@@ -13,6 +13,7 @@ function EmployerDashboard() {
   const {profileListing} = useContext(freelancerLoginContext)
   const [selectedFreelancer,setSelectedFreelancer]=useState(null)
   const [searchQuery, setSearchQuery] = useState("");
+  
 
   useEffect(() => {
     if (activeSection === "profile" && currentEmployee) {
@@ -188,10 +189,10 @@ function EmployerDashboard() {
             Job Postings
           </li>
           <li
-            className={activeSection === "shortlisted" ? "active" : ""}
-            onClick={() => setActiveSection("shortlisted")}
+            className={activeSection === "notifications" ? "active" : ""}
+            onClick={() => setActiveSection("notifications")}
           >
-            Shortlisted Freelancers
+            Notifications
           </li>
           <li
             className={activeSection === "profile" ? "active" : ""}
@@ -323,20 +324,12 @@ function EmployerDashboard() {
           </div>
         )}
 
-        {/* {activeSection === "shortlisted" && (
-          <div className="shortlisted-freelancers">
-            <h3>Shortlisted Freelancers</h3>
-            <div className="freelancer-list">
-              {freelancers.map((freelancer) => (
-                <div key={freelancer.id} className="freelancer-card">
-                  <h4>{freelancer.name}</h4>
-                  <p>Skills: {freelancer.skills.join(", ")}</p>
-                  <button>Message</button>
-                </div>
-              ))}
-            </div>
+        {activeSection === "notifications" && (
+          <div className="notifications">
+            <h3>freelancer notifications</h3>
+         
           </div>
-        )} */}
+        )}
 
         {activeSection === "profile" && (
           <div className="employer-profile">

@@ -113,23 +113,14 @@ const filteredJobs = Array.isArray(JobListing)
         availability: data.availability,
       };
   
-      console.log("Fetching employer list to find the job..."); // Debugging
-  
-      // Fetch all employers to find the one with the job
+      // Fetch employer list to find the job
       const employerResponse = await fetch('http://localhost:3000/employerList');
-      
-      if (!employerResponse.ok) {
-        throw new Error('Failed to fetch employer list');
-      }
-  
       const employers = await employerResponse.json();
   
-      // Find the employer and job
       let job = null;
       let employer = null;
   
       for (const emp of employers) {
-        // Check if emp.joblist exists and is an array
         if (emp.joblist && Array.isArray(emp.joblist)) {
           const foundJob = emp.joblist.find(j => j.id === selectedJobId);
           if (foundJob) {
@@ -143,9 +134,6 @@ const filteredJobs = Array.isArray(JobListing)
       if (!job || !employer) {
         throw new Error('Job not found');
       }
-  
-      console.log("Job Data:", job); // Debugging
-      console.log("Employer Data:", employer); // Debugging
   
       // Add the application to the employer's joblist
       const updatedJobList = employer.joblist.map(jobItem => {
@@ -161,7 +149,7 @@ const filteredJobs = Array.isArray(JobListing)
       // Update the employer's data
       const updatedEmployer = { ...employer, joblist: updatedJobList };
   
-      const updateResponse = await fetch(`http://localhost:3000/employerList/${employer.id}`, {
+      const updateEmployerResponse = await fetch(`http://localhost:3000/employerList/${employer.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -169,9 +157,42 @@ const filteredJobs = Array.isArray(JobListing)
         body: JSON.stringify(updatedEmployer),
       });
   
-      if (!updateResponse.ok) {
+      if (!updateEmployerResponse.ok) {
         throw new Error('Failed to update employer data');
       }
+  
+      // Fetch the current freelancer's data
+      const freelancerResponse = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`);
+      const freelancerData = await freelancerResponse.json();
+  
+      // Add the applied job to the freelancer's appliedJobs array
+      const appliedJob = {
+        jobId: job.id,
+        companyname: job.companyname,
+        role: job.jobTitle,
+        status: 'Pending',
+      };
+  
+      const updatedFreelancer = {
+        ...freelancerData,
+        appliedJobs: [...(freelancerData.appliedJobs || []), appliedJob],
+      };
+  
+      // Update the freelancer's data
+      const updateFreelancerResponse = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedFreelancer),
+      });
+  
+      if (!updateFreelancerResponse.ok) {
+        throw new Error('Failed to update freelancer data');
+      }
+  
+      // Update the appliedJobs state
+      setAppliedJobs(updatedFreelancer.appliedJobs);
   
       setShowApplyModal(false);
       setSelectedJobId(null);
@@ -181,6 +202,25 @@ const filteredJobs = Array.isArray(JobListing)
       alert(`Error: ${error.message}`);
     }
   };
+
+  useEffect(() => {
+  const fetchAppliedJobs = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`);
+      const data = await response.json();
+
+      if (data.appliedJobs) {
+        setAppliedJobs(data.appliedJobs);
+      }
+    } catch (error) {
+      console.error('Error fetching applied jobs:', error);
+    }
+  };
+
+  if (currentFreelancer?.id) {
+    fetchAppliedJobs();
+  }
+}, [currentFreelancer]);
   async function details(freelancerData) {
     try {
       let res = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`);
@@ -446,17 +486,33 @@ const filteredJobs = Array.isArray(JobListing)
             </div>
           </section>
         )}
-        {selectedOption === 'applied-jobs' && (
-          <section className="applied-jobs">
-            <h2>Applied Jobs</h2>
-            {appliedJobs.length === 0 ? <p>You haven't applied to any jobs yet.</p> : appliedJobs.map((job, index) => (
-              <div key={index} className="applied-job-card">
-                <h3>{job.title}</h3>
-                <p>Status: {job.status}</p>
-              </div>
-            ))}
-          </section>
-        )}
+       {selectedOption === 'applied-jobs' && (
+  <section className="applied-jobs">
+    <h2>Applied Jobs</h2>
+    {appliedJobs.length === 0 ? (
+      <p>You haven't applied to any jobs yet.</p>
+    ) : (
+      <table className="applied-jobs-table">
+        <thead>
+          <tr>
+            <th>Company Name</th>
+            <th>Role</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {appliedJobs.map((job, index) => (
+            <tr key={index}>
+              <td>{job.companyname}</td>
+              <td>{job.role}</td>
+              <td>{job.status}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </section>
+)}
         
       </div>
       {showApplyModal && (

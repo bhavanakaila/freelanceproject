@@ -1,61 +1,76 @@
 {
   "employerList": [
     {
-      "joblist": [
-        {
-          "id": 1738949491676,
-          "companyname": "tcs",
-          "jobTitle": "data analyst",
-          "status": "Active",
-          "pay": "6000",
-          "employerId": "677c",
-          "applications": [
-            {
-              "jobId": 1738949491676,
-              "freelancerId": "e7d8",
-              "status": "Pending"
-            },
-            {
-              "jobId": 1738949491676,
-              "freelancerId": "e7d8",
-              "status": "Pending"
-            }
-          ]
-        },
-        {
-          "id": 1738951858694,
-          "companyname": "tcs",
-          "jobTitle": "fullstack",
-          "status": "Active",
-          "pay": "9000",
-          "employerId": "677c",
-          "applications": [
-            {
-              "jobId": 1738951858694,
-              "freelancerId": "e7d8",
-              "status": "Pending",
-              "fullName": "Kaila Bhavana",
-              "email": "bhavanakaila046@gmail.com",
-              "phone": "0903055254",
-              "skills": "CPP,full stack,java",
-              "portfolioUrl": "http://example.com",
-              "experience": "4",
-              "rate": "6000",
-              "resumeUrl": "http://example.com",
-              "availability": "full-time"
-            }
-          ]
-        }
-      ],
-      "id": "677c"
-    },
-    {
       "id": "089b",
       "fullName": "chaitu",
       "email": "chaitu@gmail.com",
       "mobileNumber": "9491070035",
       "password": "chaitu1",
-      "userType": "Employer"
+      "userType": "Employer",
+      "joblist": [
+        {
+          "id": 1740674945219,
+          "companyname": "TCS",
+          "jobTitle": "data analyst",
+          "status": "Active",
+          "pay": "6000",
+          "employerId": "089b",
+          "applications": [
+            {
+              "jobId": 1740674945219,
+              "freelancerId": "e7d8",
+              "status": "Pending",
+              "fullName": "Kaila Bhavana",
+              "email": "bhavanakaila046@gmail.com",
+              "phone": "0903055254",
+              "skills": "analytics",
+              "portfolioUrl": "http://example.com",
+              "experience": "2",
+              "rate": "400",
+              "resumeUrl": "http://example.com",
+              "availability": "part-time"
+            }
+          ]
+        },
+        {
+          "id": 1740674953134,
+          "companyname": "TCS",
+          "jobTitle": "fullstack",
+          "status": "Active",
+          "pay": "9000",
+          "employerId": "089b",
+          "applications": [
+            {
+              "jobId": 1740674953134,
+              "freelancerId": "2527",
+              "status": "Pending",
+              "fullName": "Bhanusri",
+              "email": "bhanu@gmail.com",
+              "phone": "0903055254",
+              "skills": "css,html",
+              "portfolioUrl": "http://example.com",
+              "experience": "2",
+              "rate": "6000",
+              "resumeUrl": "http://example.com",
+              "availability": "project-based"
+            },
+            {
+              "jobId": 1740674953134,
+              "freelancerId": "e7d8",
+              "status": "Pending",
+              "fullName": "Kaila Bhavana",
+              "email": "bhavanakaila046@gmail.com",
+              "phone": "0903055254",
+              "skills": "css,html",
+              "portfolioUrl": "http://example.com",
+              "experience": "0",
+              "rate": "5000",
+              "resumeUrl": "http://example.com",
+              "availability": "full-time"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "6654",
@@ -110,7 +125,21 @@
         "github": "https://example.com",
         "pastCompanies": "Capgemini",
         "description": "an experienced professional with perations, and driving business growth, gement, team leadership, strategic planning, etc.]. My ability to adapt to dynamic environments and implement effective solutions has helped organizations achieve their goals efficiently. I am now seeking a new opportunity where I can leverage my skills and leadership to contribute to a forward-thinking company."
-      }
+      },
+      "appliedJobs": [
+        {
+          "jobId": 1740674953134,
+          "companyname": "TCS",
+          "role": "fullstack",
+          "status": "Pending"
+        },
+        {
+          "jobId": 1740674945219,
+          "companyname": "TCS",
+          "role": "data analyst",
+          "status": "Pending"
+        }
+      ]
     },
     {
       "id": "2527",
