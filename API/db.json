@@ -19,7 +19,7 @@
             {
               "jobId": 1740674945219,
               "freelancerId": "e7d8",
-              "status": "Pending",
+              "status": "Rejected",
               "fullName": "Kaila Bhavana",
               "email": "bhavanakaila046@gmail.com",
               "phone": "0903055254",
@@ -91,7 +91,7 @@
             {
               "jobId": 1739552733159,
               "freelancerId": "e7d8",
-              "status": "Pending",
+              "status": "Accepted",
               "fullName": "Kaila Bhavana",
               "email": "bhavanakaila046@gmail.com",
               "phone": "09030552549",
@@ -137,7 +137,7 @@
           "jobId": 1740674945219,
           "companyname": "TCS",
           "role": "data analyst",
-          "status": "Pending"
+          "status": "Rejected"
         }
       ]
     },

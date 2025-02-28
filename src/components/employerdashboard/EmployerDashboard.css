@@ -260,3 +260,33 @@
   width: 50%;
   max-width: 500px;
 }
+.notifications {
+  padding: 20px;
+}
+
+.job-application {
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.application-card {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+.status-actions button {
+  margin-right: 10px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.status-actions button.active {
+  background-color: #4caf50;
+  color: white;
+}
