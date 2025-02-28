@@ -79,17 +79,15 @@ function Login() {
           console.log('User found in Freelancer list, attempting Freelancer login...');
           await loginFreelancer({ username, password });
 
-
           if (freelancerLoginStatus) {
-            // setLoginError(false);
+            setLoginError(false);
             navigate('/freelancerdashboard');
             return;
           }
-          
         }
 
-        
-        setLoginError(false); 
+        // If no user is found in either list, set login error
+        setLoginError(true); 
       } catch (error) {
         console.error('Error logging in:', error);
         setLoginError(true);  
@@ -102,6 +100,7 @@ function Login() {
       <div className="login-form">
         <h2>Login</h2>
         <form onSubmit={handleSubmit}>
+          {loginError && <p className="error" style={{ color: 'red', textAlign: 'center' }}>Invalid credentials! Please check your username/email or password.</p>}
           <div className="form-group">
             <label htmlFor="username">Username</label>
             <input
@@ -125,7 +124,6 @@ function Login() {
             {errors.password && <span className="error">{errors.password}</span>}
           </div>
           <button type="submit" className="login-button">Login</button>
-          {loginError && <p className="error">Invalid credentials! Please check your username/email or password.</p>}
         </form>
         <p className="signup-link">
           Don't have an account? <a href="/register">Sign up</a>

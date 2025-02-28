@@ -15,7 +15,7 @@ function FreelancerDashboard() {
   const {currentFreelancer,setCurrentFreelancer} = useContext(freelancerLoginContext)
   const [isEditing,setIsEditing] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState(null);
- 
+  const [uploadedProfile, setUploadedProfile] = useState(null);
 const [showApplyModal, setShowApplyModal] = useState(false); 
   const { register, handleSubmit, reset } = useForm({
     defaultValues: currentFreelancer || {} 
@@ -57,12 +57,6 @@ useEffect(() => {
       console.error("Error updating profile:", error);
     }
   };
-
-  // const handleEditClick = () => {
-  //   setShowEditModal(true);
-  //   setIsEditing(true);
-  // };
-  
   const { JobListing } = useContext(employerLoginContext);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -74,16 +68,24 @@ const filteredJobs = Array.isArray(JobListing)
     )
   : [];
   const [freelancerdetails,setfreelancerdetails]=useState([])
-  const [uploadedProfile, setUploadedProfile] = useState(null);
-   // Function to handle the "Apply Now" button click
-   const handleApplyClick = (jobId) => {
-    console.log(jobId)
+  const [showAlreadyAppliedModal, setShowAlreadyAppliedModal] = useState(false);
+
+  const handleApplyClick = (jobId) => {
+    // Check if the job is already applied for
+    const alreadyApplied = appliedJobs.some(job => job.jobId === jobId);
+  
+    if (alreadyApplied) {
+      setShowAlreadyAppliedModal(true); // Show the modal
+      return;
+    }
+  
+    console.log(jobId);
     setSelectedJobId(jobId);
     // Reset the form fields to empty values
     reset({
       fullName: currentFreelancer.fullName,
       email: currentFreelancer.email,
-      phone: "",
+      phone: currentFreelancer.mobileNumber,
       skills: "",
       portfolioUrl: "",
       experience: "",
@@ -91,9 +93,8 @@ const filteredJobs = Array.isArray(JobListing)
       resumeUrl: "",
       availability: "",
     });
-
+  
     setShowApplyModal(true);
-
   };
 
   const handleProposalSubmit = async (data) => {
@@ -313,11 +314,6 @@ const filteredJobs = Array.isArray(JobListing)
     }
   };
 
-  // const handleRoleChange = e => {
-  //   setUserProfile({ ...userProfile, role: e.target.value });
-  // };
-
-  
   return (
     <div className="dashboard">
       <div className="sidebar">
@@ -359,6 +355,15 @@ const filteredJobs = Array.isArray(JobListing)
       )}
     </div>
   </section>
+)}
+{showAlreadyAppliedModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h2>Already Applied</h2>
+      <p>You have already applied for this job. Thank you!</p>
+      <button onClick={() => setShowAlreadyAppliedModal(false)}>Close</button>
+    </div>
+  </div>
 )}
 
     {selectedOption === 'profile' && (

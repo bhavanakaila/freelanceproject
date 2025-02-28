@@ -231,13 +231,10 @@ function EmployerDashboard() {
         throw new Error("Failed to update freelancer data");
       }
   
-      // Update the local state for job postings
       setJobPostings(updatedJobList);
   
-      alert("Application status updated successfully!");
     } catch (error) {
       console.error("Error updating application status:", error);
-      alert(`Error: ${error.message}`);
     }
   };
 
@@ -410,7 +407,7 @@ function EmployerDashboard() {
                 <p><strong>Email:</strong> {application.email}</p>
                 <p><strong>Skills:</strong> {application.skills}</p>
                 <p><strong>Experience:</strong> {application.experience} years</p>
-                <p><strong>Rate:</strong> ${application.rate}/hr</p>
+                <p><strong>Rate:</strong> {application.rate}/hr</p>
                 <p><strong>Availability:</strong> {application.availability}</p>
                 <p><strong>Status:</strong> {application.status}</p>
                 <div className="status-actions">

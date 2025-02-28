@@ -1,67 +1,31 @@
 {
   "employerList": [
     {
-      "id": "089b",
-      "fullName": "chaitu",
-      "email": "chaitu@gmail.com",
-      "mobileNumber": "9491070035",
-      "password": "chaitu1",
+      "id": "b395",
+      "fullName": "Kalyan",
+      "email": "kalyan@gmail.com",
+      "mobileNumber": "9087654321",
+      "password": "kalyan",
       "userType": "Employer",
+      "companyname": "Accenture",
+      "location": "Banglore",
       "joblist": [
         {
-          "id": 1740674945219,
-          "companyname": "TCS",
-          "jobTitle": "data analyst",
+          "id": 1740764755452,
+          "companyname": "Accenture",
+          "jobTitle": "SDE",
           "status": "Active",
           "pay": "6000",
-          "employerId": "089b",
+          "employerId": "b395",
           "applications": [
             {
-              "jobId": 1740674945219,
-              "freelancerId": "e7d8",
-              "status": "Rejected",
-              "fullName": "Kaila Bhavana",
-              "email": "bhavanakaila046@gmail.com",
-              "phone": "0903055254",
+              "jobId": 1740764755452,
+              "freelancerId": "799f",
+              "status": "Pending",
+              "fullName": "Kiran",
+              "email": "kiran@gmail.com",
+              "phone": "6543286954",
               "skills": "analytics",
-              "portfolioUrl": "http://example.com",
-              "experience": "2",
-              "rate": "400",
-              "resumeUrl": "http://example.com",
-              "availability": "part-time"
-            }
-          ]
-        },
-        {
-          "id": 1740674953134,
-          "companyname": "TCS",
-          "jobTitle": "fullstack",
-          "status": "Active",
-          "pay": "9000",
-          "employerId": "089b",
-          "applications": [
-            {
-              "jobId": 1740674953134,
-              "freelancerId": "2527",
-              "status": "Pending",
-              "fullName": "Bhanusri",
-              "email": "bhanu@gmail.com",
-              "phone": "0903055254",
-              "skills": "css,html",
-              "portfolioUrl": "http://example.com",
-              "experience": "2",
-              "rate": "6000",
-              "resumeUrl": "http://example.com",
-              "availability": "project-based"
-            },
-            {
-              "jobId": 1740674953134,
-              "freelancerId": "e7d8",
-              "status": "Pending",
-              "fullName": "Kaila Bhavana",
-              "email": "bhavanakaila046@gmail.com",
-              "phone": "0903055254",
-              "skills": "css,html",
               "portfolioUrl": "http://example.com",
               "experience": "0",
               "rate": "5000",
@@ -69,93 +33,133 @@
               "availability": "full-time"
             }
           ]
+        },
+        {
+          "id": 1740764772771,
+          "companyname": "Accenture",
+          "jobTitle": "Data Analyst",
+          "status": "Active",
+          "pay": "7500",
+          "employerId": "b395"
         }
       ]
     },
     {
-      "id": "6654",
-      "fullName": "Kirankumar",
-      "email": "kiran@gmail.com",
-      "mobileNumber": "9030552549",
-      "password": "kiran1",
+      "id": "299c",
+      "fullName": "Ravivarma",
+      "email": "ravi@gmail.com",
+      "mobileNumber": "8907654321",
+      "password": "ravivarma",
       "userType": "Employer",
+      "companyname": "TCS",
+      "location": "Chennai",
       "joblist": [
         {
-          "id": 1739552733159,
-          "companyname": "walmart",
-          "jobTitle": "SDE",
+          "id": 1740764884948,
+          "companyname": "Tapclicks",
+          "jobTitle": "Fullstack",
           "status": "Active",
           "pay": "9000",
-          "employerId": "6654",
+          "employerId": "299c",
           "applications": [
             {
-              "jobId": 1739552733159,
-              "freelancerId": "e7d8",
+              "jobId": 1740764884948,
+              "freelancerId": "6127",
               "status": "Accepted",
-              "fullName": "Kaila Bhavana",
+              "fullName": "Bhavana",
               "email": "bhavanakaila046@gmail.com",
-              "phone": "09030552549",
-              "skills": "CPP,full stack,java",
+              "phone": "9030552549",
+              "skills": "HTML,CSS,java script,node.js",
               "portfolioUrl": "http://example.com",
-              "experience": "4",
-              "rate": "3000",
+              "experience": "2",
+              "rate": "4000",
               "resumeUrl": "http://example.com",
               "availability": "part-time"
             }
           ]
+        },
+        {
+          "id": 1740764901745,
+          "companyname": "Tapclicks",
+          "jobTitle": "Web Development",
+          "status": "Active",
+          "pay": "8500",
+          "employerId": "299c",
+          "applications": [
+            {
+              "jobId": 1740764901745,
+              "freelancerId": "799f",
+              "status": "Rejected",
+              "fullName": "Kiran",
+              "email": "kiran@gmail.com",
+              "phone": "6543286954",
+              "skills": "css,html",
+              "portfolioUrl": "http://example.com",
+              "experience": "2",
+              "rate": "2000",
+              "resumeUrl": "http://example.com",
+              "availability": "project-based"
+            }
+          ]
         }
-      ],
-      "companyname": "walmart",
-      "location": "chennai"
+      ]
     }
   ],
   "freelancerList": [
     {
-      "id": "e7d8",
-      "fullName": "Kaila Bhavana",
+      "id": "6127",
+      "fullName": "Bhavana",
       "email": "bhavanakaila046@gmail.com",
       "mobileNumber": "9030552549",
       "password": "bhavana",
       "userType": "Freelancer",
-      "profileList": {
-        "fullName": "Kaila Bhavana",
-        "email": "bhavanakaila046@gmail.com",
-        "workExperience": "4",
-        "skills": "CPP,full stack,java",
-        "github": "https://example.com",
-        "pastCompanies": "Capgemini",
-        "description": "an experienced professional with perations, and driving business growth, gement, team leadership, strategic planning, etc.]. My ability to adapt to dynamic environments and implement effective solutions has helped organizations achieve their goals efficiently. I am now seeking a new opportunity where I can leverage my skills and leadership to contribute to a forward-thinking company."
-      },
       "appliedJobs": [
         {
-          "jobId": 1740674953134,
-          "companyname": "TCS",
-          "role": "fullstack",
+          "jobId": 1740764884948,
+          "companyname": "Tapclicks",
+          "role": "Fullstack",
+          "status": "Accepted"
+        }
+      ],
+      "profileList": {
+        "fullName": "Bhavana",
+        "email": "bhavanakaila046@gmail.com",
+        "workExperience": "2",
+        "skills": "HTML,CSS,java script,node.js",
+        "github": "https://example.com",
+        "pastCompanies": "TCS",
+        "description": "weretuyiolk,mnbvaawaertyuikndfghjmnbvcxzdfghjkmnbvcxssdfghjmn bvcxfghnm nbvc xfghnm cxgh nasdfghjzxcvb nm"
+      }
+    },
+    {
+      "id": "799f",
+      "fullName": "Kiran",
+      "email": "kiran@gmail.com",
+      "mobileNumber": "6543286954",
+      "password": "kiran1",
+      "userType": "Freelancer",
+      "appliedJobs": [
+        {
+          "jobId": 1740764755452,
+          "companyname": "Accenture",
+          "role": "SDE",
           "status": "Pending"
         },
         {
-          "jobId": 1740674945219,
-          "companyname": "TCS",
-          "role": "data analyst",
+          "jobId": 1740764901745,
+          "companyname": "Tapclicks",
+          "role": "Web Development",
           "status": "Rejected"
         }
-      ]
-    },
-    {
-      "id": "2527",
-      "fullName": "Bhanusri",
-      "email": "bhanu@gmail.com",
-      "mobileNumber": "9030552549",
-      "password": "bhanusri",
-      "userType": "Freelancer",
+      ],
       "profileList": {
-        "fullName": "Bhanusri",
-        "email": "bhanu@gmail.com",
-        "workExperience": "4",
-        "skills": "css,html",
+        "fullName": "Kiran",
+        "email": "kiran@gmail.com",
+        "workExperience": "2",
+        "skills": "Bussiness analytics",
         "github": "https://example.com",
-        "pastCompanies": "TCS",
-        "description": "an experienced professional with a strong background ing operations, and ls like project management, to a forward-thinking company."
+        "pastCompanies": "Capgemini",
+        "description": "rytuilk,mnbvcxaswertyuiol;.,mnbvcxzazsertyuikl,m nbvcxsaertytuikl,mn bvcxawaesrdfcgvhbjnkdfghjkle5rt6y7uiopasdfghjklxcvbnmkjhgfdsaqwertyuio9876543q"
       }
     }
   ]
