@@ -32,24 +32,19 @@ function EmployerDashboard() {
     }
   
     try {
-      // Fetch the current employer data
       const response = await fetch(`http://localhost:3000/employerList/${currentEmployee.id}`);
       if (!response.ok) {
         throw new Error("Failed to fetch current employer data");
       }
       const existingData = await response.json();
-  
-      // Create an updated employer object with only the profile fields
       const updatedEmployer = {
-        ...existingData, // Keep existing data
-        fullName: data.fullName, // Update profile fields
+        ...existingData,
+        fullName: data.fullName, 
         email: data.email,
         mobileNumber: data.mobileNumber,
         companyname: data.companyname,
         location: data.location,
       };
-  
-      // Update the employer entry in the database
       const updateResponse = await fetch(`http://localhost:3000/employerList/${currentEmployee.id}`, {
         method: "PUT",
         headers: {
@@ -63,8 +58,8 @@ function EmployerDashboard() {
       }
   
       const updatedEmployerData = await updateResponse.json();
-      setCurrentEmployee(updatedEmployerData); // Update state
-      setIsEditing(false); // Exit edit mode
+      setCurrentEmployee(updatedEmployerData); 
+      setIsEditing(false); 
     } catch (error) {
       console.error("Error updating profile:", error);
     }
@@ -173,16 +168,13 @@ function EmployerDashboard() {
 
   const handleUpdateApplicationStatus = async (jobId, freelancerId, status) => {
     try {
-      // Fetch the current employer data
       const employerRes = await fetch(`http://localhost:3000/employerList/${currentEmployee.id}`);
       const employerData = await employerRes.json();
-  
-      // Find the job and update the application status in the employer's joblist
       const updatedJobList = employerData.joblist.map((job) => {
         if (job.id === jobId) {
           const updatedApplications = job.applications.map((application) => {
             if (application.freelancerId === freelancerId) {
-              return { ...application, status }; // Update the status
+              return { ...application, status }; 
             }
             return application;
           });
@@ -191,7 +183,7 @@ function EmployerDashboard() {
         return job;
       });
   
-      // Update the employer's data in the database
+    
       const updatedEmployer = { ...employerData, joblist: updatedJobList };
       const updateEmployerResponse = await fetch(`http://localhost:3000/employerList/${currentEmployee.id}`, {
         method: "PUT",
@@ -204,20 +196,14 @@ function EmployerDashboard() {
       if (!updateEmployerResponse.ok) {
         throw new Error("Failed to update employer data");
       }
-  
-      // Fetch the freelancer's data
       const freelancerRes = await fetch(`http://localhost:3000/freelancerList/${freelancerId}`);
       const freelancerData = await freelancerRes.json();
-  
-      // Update the status in the freelancer's appliedJobs array
       const updatedAppliedJobs = freelancerData.appliedJobs.map((job) => {
         if (job.jobId === jobId) {
-          return { ...job, status }; // Update the status
+          return { ...job, status };
         }
         return job;
       });
-  
-      // Update the freelancer's data in the database
       const updatedFreelancer = { ...freelancerData, appliedJobs: updatedAppliedJobs };
       const updateFreelancerResponse = await fetch(`http://localhost:3000/freelancerList/${freelancerId}`, {
         method: "PUT",
@@ -237,7 +223,7 @@ function EmployerDashboard() {
       console.error("Error updating application status:", error);
     }
   };
-
+ //console.log("availability",freelancer.availability);
   return (
     <div className="dashboard-container">
       <div className="sidebar">
@@ -274,7 +260,7 @@ function EmployerDashboard() {
       {activeSection === "dashboard" && (
           <div className="freelancer-profiles">
             <h3>Freelancer Profiles</h3>
-            <div className="search-bar">
+            <div className="esearch-bar">
               <input type="text" placeholder="Search freelancers..." value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -285,10 +271,12 @@ function EmployerDashboard() {
                 <div key={index} className="freelancer-card">
                   <div className="usericon">
                     <FaRegUser size={70} />
+                    
                   </div>
                   <div className="freelancer-card-right">
                     <h4>{freelancer.fullName}</h4>
                     <p>{freelancer.description}</p>
+                    <p>{freelancer.availability}</p>
                     <button onClick={() => handleViewProfile(freelancer)}>View Profile</button>
                   </div>
                 </div>

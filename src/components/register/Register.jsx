@@ -66,8 +66,6 @@ function Register() {
 
         const employers = await employerResponse.json();
         const freelancers = await freelancerResponse.json();
-
-        // Check if username already exists in either list
         const userExists = employers.some(emp => emp.fullName === fullName) ||
                            freelancers.some(free => free.fullName === fullName);
 
@@ -75,8 +73,6 @@ function Register() {
           setUserExists(true);
           return;
         }
-
-        // If user does not exist, register the new user
         const newUser = { fullName, email, mobileNumber, password, userType };
         await fetch(
           userType === 'Employer'

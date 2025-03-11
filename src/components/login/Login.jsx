@@ -49,8 +49,6 @@ function Login() {
     if (validateForm()) {
       try {
         console.log('Login attempt with:', username, password);
-
-        // Check employer credentials
         let empRes = await fetch("http://localhost:3000/employerList");
         let employers = await empRes.json();
         let isEmployer = employers.some(emp => emp.fullName === username);
@@ -67,8 +65,6 @@ function Login() {
             return;
           }
         }
-
-        // Check freelancer credentials (matching based on fullName)
         let freeRes = await fetch("http://localhost:3000/freelancerList");
         let freelancers = await freeRes.json();
         console.log(freelancers);
@@ -85,8 +81,6 @@ function Login() {
             return;
           }
         }
-
-        // If no user is found in either list, set login error
         setLoginError(true); 
       } catch (error) {
         console.error('Error logging in:', error);
@@ -100,7 +94,7 @@ function Login() {
       <div className="login-form">
         <h2>Login</h2>
         <form onSubmit={handleSubmit}>
-          {loginError && <p className="error" style={{ color: 'red', textAlign: 'center' }}>Invalid credentials! Please check your username/email or password.</p>}
+          {loginError && <p className="error" style={{ color: 'red', textAlign: 'center' }}>Invalid credentials! Please check your username or password.</p>}
           <div className="form-group">
             <label htmlFor="username">Username</label>
             <input

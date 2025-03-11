@@ -71,17 +71,17 @@ const filteredJobs = Array.isArray(JobListing)
   const [showAlreadyAppliedModal, setShowAlreadyAppliedModal] = useState(false);
 
   const handleApplyClick = (jobId) => {
-    // Check if the job is already applied for
+   
     const alreadyApplied = appliedJobs.some(job => job.jobId === jobId);
   
     if (alreadyApplied) {
-      setShowAlreadyAppliedModal(true); // Show the modal
+      setShowAlreadyAppliedModal(true); 
       return;
     }
   
     console.log(jobId);
     setSelectedJobId(jobId);
-    // Reset the form fields to empty values
+   
     reset({
       fullName: currentFreelancer.fullName,
       email: currentFreelancer.email,
@@ -113,8 +113,6 @@ const filteredJobs = Array.isArray(JobListing)
         resumeUrl: data.resumeUrl,
         availability: data.availability,
       };
-  
-      // Fetch employer list to find the job
       const employerResponse = await fetch('http://localhost:3000/employerList');
       const employers = await employerResponse.json();
   
@@ -135,8 +133,6 @@ const filteredJobs = Array.isArray(JobListing)
       if (!job || !employer) {
         throw new Error('Job not found');
       }
-  
-      // Add the application to the employer's joblist
       const updatedJobList = employer.joblist.map(jobItem => {
         if (jobItem.id === selectedJobId) {
           if (!jobItem.applications) {
@@ -226,8 +222,6 @@ const filteredJobs = Array.isArray(JobListing)
     try {
       let res = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`);
       let data = await res.json();
-  
-      // Create a new profileList object without the basic details
       const profileList = {
         fullName: freelancerData.fullName,
         email: freelancerData.email,
@@ -238,7 +232,6 @@ const filteredJobs = Array.isArray(JobListing)
         description: freelancerData.description
       };
   
-      // Update the freelancer entry with the new profileList
       data.profileList = profileList;
   
       res = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`, {
@@ -285,11 +278,7 @@ const filteredJobs = Array.isArray(JobListing)
     try {
       let res = await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`);
       let data = await res.json();
-  
-      // Remove profile details
       delete data.profileList;
-  
-      // Update the freelancer entry in db.json
       await fetch(`http://localhost:3000/freelancerList/${currentFreelancer.id}`, {
         method: "PUT",
         headers: {
@@ -297,8 +286,6 @@ const filteredJobs = Array.isArray(JobListing)
         },
         body: JSON.stringify(data),
       });
-  
-      // Clear state after deletion
       setUploadedProfile(null);
       setfreelancerdetails([]);
     } catch (error) {
@@ -371,9 +358,7 @@ const filteredJobs = Array.isArray(JobListing)
       <section className="profile ">
         <h2>User Profile</h2>
         <div className="basic border rounded bg-white">
-      {/* User Profile Image */}
       <div className='usericon'> <FaUserCircle size={140}/> </div>
-      {/* Freelancer Basic Details */}
       {isEditing? (
         <form onSubmit={handleSubmit(onSubmitProfile)} className="space-y-4">
         <div className="form-group">

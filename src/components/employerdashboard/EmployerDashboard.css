@@ -41,18 +41,18 @@
     background-color: #f4f4f4;
   }
    
-  .freelancer-profiles .search-bar {
+  .freelancer-profiles .esearch-bar {
     margin-bottom: 20px;
     max-width: 55%;
   }
   
-  .freelancer-profiles .search-bar input {
+  .freelancer-profiles .esearch-bar input {
     padding: 10px;
     width: 300px;
     border: 1px solid #ccc;
     border-radius: 5px;
   }  
-  .freelancer-profiles .search-bar button {
+  .freelancer-profiles .esearch-bar button {
     padding: 10px 20px;
     background-color: #1abc9c;
     color: white;
